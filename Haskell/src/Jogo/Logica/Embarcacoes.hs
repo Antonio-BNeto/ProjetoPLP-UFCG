@@ -34,9 +34,49 @@ representacaoVisual Barco         = "B"
 -- Tipo que vai representar uma posição no tabuleiro (linha, coluna)
 data Posicao = Posicao Int Int deriving (Eq, Show)
 
--- tipo que representa uma embacação no jogo
+-- Tipo que vai representar a orientação que a embarcação será colocada
+data Orientacao = Horizontal | Vertical deriving (Eq, Show)
+
+-- Função que com base no char que o usuário passar vai dizer qual é a orientação
+charParaOrientacao :: Char -> Maybe Orientacao
+charParaOrientacao 'h' = Just Horizontal
+charParaOrientacao 'v' = Just Vertical
+charParaOrientacao 'H' = Just Horizontal
+charParaOrientacao 'V' = Just Vertical
+charParaOrientacao _   = Nothing
+
+
+-- Posicao (x, y) -> linha coluna
+-- TipoEmbacacao (qual é a embarcacao para assim definir o tamanho)
+-- Char (v -> Vertical) ou (h -> Horizontal)
+-- [Posicao] : Um array com as posições que a embarcação vai ocupar
+geraCorpoEmbarcacao :: Posicao -> TipoEmbarcacao -> Orientacao -> [Posicao]
+geraCorpoEmbarcacao (Posicao x y) tipo orient =
+    let tamanho = tamanhoEmbarcacao tipo
+    in case orient of
+        Horizontal -> [Posicao x (y + i) | i <- [0..tamanho - 1]]
+        Vertical   -> [Posicao (x + i) y | i <- [0..tamanho - 1]]
+
+-- Tipo que representa uma embarcação no jogo
 data Embarcacao = Embarcacao
     { tipo :: TipoEmbarcacao
     , posicoes :: [Posicao]
     , atingida :: [Bool]
     } deriving (Show, Eq)
+
+-- Função que cria uma nova embarcação completa
+criaEmbarcacaoCompleta :: Posicao -> TipoEmbarcacao -> Orientacao -> Embarcacao
+criaEmbarcacaoCompleta cabeca tipo orient =
+    let posicoes = geraCorpoEmbarcacao cabeca tipo orient
+    in Embarcacao
+        { tipo = tipo
+        , posicoes = posicoes
+        , atingida = replicate (length posicoes) False
+        }
+
+
+-- Função de validação para quando gerar o corpo ele não sair do tabuleiro
+
+
+-- Função para saber se o corpo gerado
+-- não está sobrepondo alguma outra embarcação (responsabilidade do Embarcacoes.hs?)
