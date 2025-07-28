@@ -78,4 +78,7 @@ executable batalha-naval-haskell
     -- Base language which the package is written in.
     default-language: Haskell2010
 
-    other-modules: Jogo.Arquitetura
+    other-modules: Jogo.Arquitetura,
+                   Logica.Bot,
+                   Util.IOUtils,
+                   Controlador.Controlador
