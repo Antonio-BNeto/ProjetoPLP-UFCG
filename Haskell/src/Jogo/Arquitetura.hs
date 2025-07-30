@@ -11,7 +11,7 @@ data Navio = Navio {
     partesAtingidas :: [Coordenada] 
 } deriving (Show, Eq)
 
-
+-- Definindo os tipos do Navio
 naviosPadrao :: [Navio]
 naviosPadrao =
   [ Navio "Porta-Avioes" 5 [] []
@@ -21,6 +21,7 @@ naviosPadrao =
   , Navio "Destroyer"  2 [] []
   ]
 
+-- Definindo a orientação do Navio
 data Orientacao = H | V deriving (Show, Eq)
 
 -- Definindo os "estados" de cada célula
