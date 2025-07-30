@@ -11,6 +11,18 @@ data Navio = Navio {
     partesAtingidas :: [Coordenada] 
 } deriving (Show, Eq)
 
+
+naviosPadrao :: [Navio]
+naviosPadrao =
+  [ Navio "Porta-Avioes" 5 [] []
+  , Navio "Encouracado" 4 [] []
+  , Navio "Submarino" 3 [] []
+  , Navio "Cruzador"   3 [] []
+  , Navio "Destroyer"  2 [] []
+  ]
+
+data Orientacao = H | V deriving (Show, Eq)
+
 -- Definindo os "estados" de cada célula
 data Celula = Agua 
             | ParteNavio 
