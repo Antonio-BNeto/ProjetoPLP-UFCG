@@ -1,4 +1,14 @@
-module Jogo.Arquitetura where
+module Jogo.Arquitetura (
+  Coordenada,
+  Navio(..),
+  Celula(..),
+  naviosPadrao,
+  Orientacao,
+  exibicaoCelula,
+  tamanhoTabuleiro,
+  Tabuleiro,
+  criacaoTabuleiro
+) where
 
 -- Determinando um tipo "Coordenada"
 type Coordenada = (Int, Int)

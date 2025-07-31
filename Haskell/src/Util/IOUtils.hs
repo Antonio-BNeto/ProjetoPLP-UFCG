@@ -1,6 +1,7 @@
 module Util.IOUtils where
 
-import Jogo.Arquitetura (Orientacao)
+import Jogo.Arquitetura
+
 lerOrientacao :: IO Orientacao
 lerOrientacao = do
     putStr "Orientação (h para horizontal, v para vertical)"
