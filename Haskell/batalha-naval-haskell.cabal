@@ -69,7 +69,7 @@ executable batalha-naval-haskell
     -- other-extensions:
 
     -- Other library packages from which modules are imported.
-    build-depends:    base ^>=4.18.3.0
+    build-depends:    base ^>=4.18.3.0 , random > =1.2
 
     -- Directories containing source files.
     hs-source-dirs:   app, 
@@ -79,6 +79,7 @@ executable batalha-naval-haskell
     default-language: Haskell2010
 
     other-modules: Jogo.Arquitetura,
+                   Logica.Posicionamento,
                    Logica.Bot,
                    Util.IOUtils,
                    Controlador.Controlador

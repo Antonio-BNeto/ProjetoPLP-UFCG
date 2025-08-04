@@ -1,4 +1,14 @@
-module Jogo.Arquitetura where
+module Jogo.Arquitetura (
+  Coordenada,
+  Navio(..),
+  Celula(..),
+  naviosPadrao,
+  Orientacao,
+  exibicaoCelula,
+  tamanhoTabuleiro,
+  Tabuleiro,
+  criacaoTabuleiro
+) where
 
 -- Determinando um tipo "Coordenada"
 type Coordenada = (Int, Int)
@@ -48,3 +58,11 @@ type Tabuleiro = [[Celula]]
 -- Cria um Tabuleiro só com água (vazio)
 criacaoTabuleiro :: Tabuleiro
 criacaoTabuleiro = replicate tamanhoTabuleiro (replicate tamanhoTabuleiro Agua)
+
+exibeTabuleiro :: Tabuleiro -> IO ()
+exibeTabuleiro tabuleiro = mapM_ putStrLn [concatMap exibicaoCelula linha | linha <- tabuleiro]
+
+main :: IO ()
+main = do
+    let tab = criacaoTabuleiro
+    exibeTabuleiro tab
