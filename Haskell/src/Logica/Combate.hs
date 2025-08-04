@@ -1,13 +1,13 @@
 module Logica.Combate (ResultadoAtaque(..), realizarAtaque, verificaVitoria) where
 
 import Jogo.Arquitetura
-import qualified Jogo.Tabuleiro as T
-import qualified Jogo.Navio     as N
+import qualified Jogo.Tabuleiro as Tabuleiro
+import qualified Jogo.Navio     as Navio
 
 data ResultadoAtaque
   = TiroFora
-  | TiroRepetidoHit
-  | TiroRepetidoMiss
+  | AcertoRepetido
+  | ErroRepetido
   | Acertou String
   | Afundou String
   | CoordenadaInvalida
@@ -17,23 +17,32 @@ data ResultadoAtaque
 realizarAtaque
   :: Tabuleiro -> [Navio] -> Coordenada
   -> (Tabuleiro, [Navio], ResultadoAtaque)
-realizarAtaque tab navios coord =
-  case T.obter coord tab of
-    Nothing         -> (tab, navios, CoordenadaInvalida)
-    Just Agua       ->
-      let novoTab = T.marca coord Erro tab
-      in  (novoTab, navios, TiroFora)
+realizarAtaque tabuleiro listaDeNavios coordenada =
+  case Tabuleiro.obter coordenada tabuleiro of
+    Nothing ->
+      (tabuleiro, listaDeNavios, CoordenadaInvalida)
+
+    Just Agua ->
+      let novoTabuleiro = Tabuleiro.marca coordenada Erro tabuleiro
+      in (novoTabuleiro, listaDeNavios, TiroFora)
+
     Just ParteNavio ->
-      let novoTab           = T.marca coord Atingido tab
-          naviosAtualizados = N.atualizaNavios coord navios
-      in  case N.encontraNavio coord naviosAtualizados of
-            Just n  ->
-              if N.navioAfundado n
-                 then (novoTab, naviosAtualizados, Afundou (tipo n))
-                 else (novoTab, naviosAtualizados, Acertou (tipo n))
-            Nothing -> (tab, navios, ErroInterno)
-    Just Atingido   -> (tab, navios, TiroRepetidoHit)
-    Just Erro       -> (tab, navios, TiroRepetidoMiss)
+      let novoTabuleiro     = Tabuleiro.marca coordenada Atingido tabuleiro
+          naviosAtualizados = Navio.atualizaNavios coordenada listaDeNavios
+      in
+        case Navio.encontraNavio coordenada naviosAtualizados of
+          Just navio ->
+            if Navio.navioAfundado navio
+              then (novoTabuleiro, naviosAtualizados, Afundou (tipo navio))
+              else (novoTabuleiro, naviosAtualizados, Acertou (tipo navio))
+          Nothing ->
+            (tabuleiro, listaDeNavios, ErroInterno)
+
+    Just Atingido ->
+      (tabuleiro, listaDeNavios, AcertoRepetido)
+
+    Just Erro ->
+      (tabuleiro, listaDeNavios, ErroRepetido)
 
 verificaVitoria :: [Navio] -> Bool
-verificaVitoria = all N.navioAfundado
+verificaVitoria = all Navio.navioAfundado

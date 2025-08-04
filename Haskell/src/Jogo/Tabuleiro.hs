@@ -1,6 +1,6 @@
 module Jogo.Tabuleiro (marca, obter) where
 
-import Jogo.Arquitetura -- Alterado aqui
+import Jogo.Arquitetura
 import Util.Lista (atualizaIndice)
 
 obter :: Coordenada -> Tabuleiro -> Maybe Celula
@@ -9,8 +9,9 @@ obter (x,y) tab =
      then Just ((tab !! x) !! y)
      else Nothing
 
+
 marca :: Coordenada -> Celula -> Tabuleiro -> Tabuleiro
-marca (x,y) novo tab =
+marca (x,y) novoEstado tab =
   let linha     = tab !! x
-      novaLinha = atualizaIndice y novo linha
+      novaLinha = atualizaIndice y novoEstado linha
   in  atualizaIndice x novaLinha tab
