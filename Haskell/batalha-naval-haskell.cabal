@@ -81,5 +81,7 @@ executable batalha-naval-haskell
     other-modules: Jogo.Arquitetura,
                    Logica.Posicionamento,
                    Logica.Bot,
+                   Jogo.Navio,
+                    
                    Util.IOUtils,
                    Controlador.Controlador
