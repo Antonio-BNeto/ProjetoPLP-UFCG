@@ -11,6 +11,9 @@ obter (x,y) tab =
 
 marca :: Coordenada -> Celula -> Tabuleiro -> Tabuleiro
 marca (x,y) novo tab =
-  let linha     = tab !! x
-      novaLinha = atualizaIndice y novo linha
-  in  atualizaIndice x novaLinha tab
+  if x >= 0 && y >= 0 && x < length tab && y < length (tab !! x)
+     then
+       let linha     = tab !! x
+           novaLinha = atualizaIndice y novo linha
+       in  atualizaIndice x novaLinha tab
+     else tab  -- Retorna o tabuleiro inalterado

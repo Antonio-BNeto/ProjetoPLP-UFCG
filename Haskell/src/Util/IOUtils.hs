@@ -1,6 +1,7 @@
 module Util.IOUtils where
 
 import Jogo.Arquitetura
+import Data.Char (toLower)
 
 lerOrientacao :: IO Orientacao
 lerOrientacao = do

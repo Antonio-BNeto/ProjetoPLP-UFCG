@@ -11,9 +11,12 @@ encontraNavio coord (n:ns)
 atualizaNavios :: Coordenada -> [Navio] -> [Navio]
 atualizaNavios _     [] = []
 atualizaNavios coord (n:ns)
-  | coord `elem` posicoes n && coord `notElem` partesAtingidas n =
-      n { partesAtingidas = coord : partesAtingidas n } : ns
+  | coord `elem` posicoes n =
+      let jaAtingido = coord `elem` partesAtingidas n
+          novasPartes = if jaAtingido then partesAtingidas n else coord : partesAtingidas n
+      in n { partesAtingidas = novasPartes } : ns
   | otherwise = n : atualizaNavios coord ns
+
 
 navioAfundado :: Navio -> Bool
 navioAfundado n = all (`elem` partesAtingidas n) (posicoes n)

@@ -1,13 +1,14 @@
+{-# LANGUAGE BlockArguments #-}
 module Jogo.Arquitetura (
   Coordenada,
   Navio(..),
   Celula(..),
   naviosPadrao,
-  Orientacao,
+  Orientacao(..),
   exibicaoCelula,
   tamanhoTabuleiro,
   Tabuleiro,
-  criacaoTabuleiro
+  criacaoTabuleiro,
 ) where
 
 -- Determinando um tipo "Coordenada"
@@ -39,7 +40,7 @@ data Celula = Agua
             | ParteNavio 
             | Atingido 
             | Erro
-            deriving (Eq)
+            deriving (Eq, Show)
 
 -- Exibição da célula
 exibicaoCelula :: Celula -> String
@@ -58,11 +59,3 @@ type Tabuleiro = [[Celula]]
 -- Cria um Tabuleiro só com água (vazio)
 criacaoTabuleiro :: Tabuleiro
 criacaoTabuleiro = replicate tamanhoTabuleiro (replicate tamanhoTabuleiro Agua)
-
-exibeTabuleiro :: Tabuleiro -> IO ()
-exibeTabuleiro tabuleiro = mapM_ putStrLn [concatMap exibicaoCelula linha | linha <- tabuleiro]
-
-main :: IO ()
-main = do
-    let tab = criacaoTabuleiro
-    exibeTabuleiro tab

@@ -3,53 +3,63 @@ module Logica.Posicionamento (
     validaPosicionamento,
     marcaNaviosNoTabuleiro,
     atualizaCelula,
-    posicionarNavio
+    posicionarNavio,
 ) where
-    
-import Jogo.Arquitetura
 
+import Logica.Geradores (geraCoordenada, geraOrientacao)
+import Jogo.Arquitetura (Coordenada, Tabuleiro, Celula(..), Navio(..), Orientacao(H, V))
+import Jogo.Tabuleiro
+
+-- Verifica se a coordenada está dentro dos limites do tabuleiro
 coordenadaValida :: Coordenada -> Bool
-coordenadaValida (x, y) =
-    x >= 1 && y >= 1 && x <= 10 && y <= 10
+coordenadaValida (x, y) = x >= 1 && y >= 1 && x <= 10 && y <= 10
 
+-- Gera a lista de coordenadas que o navio ocupa com base na orientação
 geraCorpoEmbarcacao :: Coordenada -> Navio -> Orientacao -> [Coordenada]
-geraCorpoEmbarcacao (x ,y) navio orient =
-    let tam = tamanho navio
-    in case orient of
-        H -> [ (x+i, y) | i <- [0..tam - 1]]
-        V -> [ (x, y+i) | i <- [0..tam - 1]]
+geraCorpoEmbarcacao (x, y) navio orient =
+  let tam = tamanho navio
+  in case orient of
+       H -> [(x+i, y) | i <- [0..tam - 1]]
+       V -> [(x, y+i) | i <- [0..tam - 1]]
 
--- true: se as posições que vou gerar o navio é valida
--- false: se existir um navio ou a entrada foi inválida
+-- Verifica se é possível posicionar o navio na posição/orientação dada
 validaPosicionamento :: Tabuleiro -> Coordenada -> Navio -> Orientacao -> Bool
 validaPosicionamento tab coord navio orient =
-    let corpoNavio = geraCorpoEmbarcacao coord navio orient
-        dentroLimite = all coordenadaValida corpoNavio
-        celulasLivres = all (\(x, y)-> tab !! (y-1) !! (x-1) == Agua) corpoNavio
-    in dentroLimite && celulasLivres
-
--- Atualiza o tabuleiro para marcar as posições ocupadas com ParteNavio
-marcaNaviosNoTabuleiro :: Tabuleiro -> [Coordenada] -> Tabuleiro
-marcaNaviosNoTabuleiro tab coords =
-  foldl (\t (x,y) -> atualizaCelula t (x-1) (y-1) ParteNavio) tab coords
+  let corpo = geraCorpoEmbarcacao coord navio orient
+      dentroLimite = all coordenadaValida corpo
+      celulasLivres = all (\(x, y) -> tab !! (x-1) !! (y-1) == Agua) corpo
+  in dentroLimite && celulasLivres
 
 -- Atualiza uma célula (x,y) no tabuleiro com um valor dado
 atualizaCelula :: Tabuleiro -> Int -> Int -> Celula -> Tabuleiro
-atualizaCelula tab x y val =
-  let (beforeRows, row:afterRows) = splitAt y tab
-      (beforeCells, _:afterCells) = splitAt x row
-      newRow = beforeCells ++ [val] ++ afterCells
-  in beforeRows ++ [newRow] ++ afterRows
+atualizaCelula tab x y val = case splitAt y tab of
+  (beforeRows, row:afterRows) -> case splitAt x row of
+    (beforeCells, _:afterCells) ->
+      let newRow = beforeCells ++ [val] ++ afterCells
+      in beforeRows ++ [newRow] ++ afterRows
+    _ -> tab  -- Fallback seguro
+  _ -> tab  -- Fallback seguro
 
--- Posiciona um navio válido no tabuleiro, gerando posições até achar válidas
+-- Marca as coordenadas ocupadas pelo navio como ParteNavio
+marcaNaviosNoTabuleiro :: Tabuleiro -> [Coordenada] -> Tabuleiro
+marcaNaviosNoTabuleiro
+  = foldl
+      (\ t (x, y)
+         -> let coord = (x - 1, y - 1)
+            in
+              case obter coord t of
+                Just _ -> marca coord ParteNavio t
+                Nothing -> t)
+
+-- Posiciona um navio válido no tabuleiro, repetindo até obter sucesso
 posicionarNavio :: Tabuleiro -> Navio -> IO (Navio, Tabuleiro)
 posicionarNavio tab navio = do
   pos <- geraCoordenada
   orient <- geraOrientacao
   if validaPosicionamento tab pos navio orient
     then do
-      let posicoes = geraCorpoEmbarcacao pos navio orient
-          novoTab = marcaNaviosNoTabuleiro tab posicoes
-          novoNavio = navio { posicoes = posicoes }
+      let corpoNavio = geraCorpoEmbarcacao pos navio orient
+          novoTab = marcaNaviosNoTabuleiro tab corpoNavio
+          novoNavio = navio { posicoes = corpoNavio }
       return (novoNavio, novoTab)
     else posicionarNavio tab navio
