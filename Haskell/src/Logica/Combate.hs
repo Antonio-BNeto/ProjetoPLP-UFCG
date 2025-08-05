@@ -5,13 +5,12 @@ import qualified Jogo.Tabuleiro as Tabuleiro
 import qualified Jogo.Navio     as Navio
 
 data ResultadoAtaque
-  = TiroFora
-  | AcertoRepetido
-  | ErroRepetido
-  | Acertou String
-  | Afundou String
-  | CoordenadaInvalida
-  | ErroInterno
+  = TiroFora              -- O ataque atingiu a água.
+  | AcertoRepetido        -- O ataque foi em uma posição de navio já atingida.
+  | ErroRepetido          -- O ataque foi em uma posição de água já atacada.
+  | Acertou String        -- O ataque acertou um navio, mas não o afundou.
+  | Afundou String        -- O ataque acertou e afundou o navio.
+  | CoordenadaInvalida    -- A coordenada do ataque está fora dos limites do tabuleiro.
   deriving (Eq, Show)
 
 realizarAtaque
@@ -36,7 +35,10 @@ realizarAtaque tabuleiro listaDeNavios coordenada =
               then (novoTabuleiro, naviosAtualizados, Afundou (tipo navio))
               else (novoTabuleiro, naviosAtualizados, Acertou (tipo navio))
           Nothing ->
-            (tabuleiro, listaDeNavios, ErroInterno)
+            -- Se o navio foi atingido no tabuleiro mas não encontrado na lista,
+            -- retorna o estado atualizado mas considera como um tiro repetido
+            -- para não travar o jogo. Isso aponta para um erro na lógica de setup.
+            (novoTabuleiro, naviosAtualizados, AcertoRepetido)
 
     Just Atingido ->
       (tabuleiro, listaDeNavios, AcertoRepetido)
