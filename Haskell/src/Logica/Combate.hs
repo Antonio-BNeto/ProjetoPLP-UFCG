@@ -10,7 +10,7 @@ data ResultadoAtaque
   | ErroRepetido          -- O ataque foi em uma posição de água já atacada.
   | Acertou String        -- O ataque acertou um navio, mas não o afundou.
   | Afundou String        -- O ataque acertou e afundou o navio.
-  | CoordenadaInvalida    -- A coordenada do ataque está fora dos limites do tabuleiro.
+  | CoordenadaInvalida    -- A coordenada está fora dos limites do tabuleiro.
   deriving (Eq, Show)
 
 realizarAtaque
@@ -26,19 +26,18 @@ realizarAtaque tabuleiro listaDeNavios coordenada =
       in (novoTabuleiro, listaDeNavios, TiroFora)
 
     Just ParteNavio ->
-      let novoTabuleiro     = Tabuleiro.marca coordenada Atingido tabuleiro
-          naviosAtualizados = Navio.atualizaNavios coordenada listaDeNavios
-      in
-        case Navio.encontraNavio coordenada naviosAtualizados of
-          Just navio ->
-            if Navio.navioAfundado navio
-              then (novoTabuleiro, naviosAtualizados, Afundou (tipo navio))
-              else (novoTabuleiro, naviosAtualizados, Acertou (tipo navio))
-          Nothing ->
-            -- Se o navio foi atingido no tabuleiro mas não encontrado na lista,
-            -- retorna o estado atualizado mas considera como um tiro repetido
-            -- para não travar o jogo. Isso aponta para um erro na lógica de setup.
-            (novoTabuleiro, naviosAtualizados, AcertoRepetido)
+      case Navio.encontraNavio coordenada listaDeNavios of
+        Just navio ->
+          let novoTabuleiro     = Tabuleiro.marca coordenada Atingido tabuleiro
+              naviosAtualizados = Navio.atualizaNavios coordenada listaDeNavios
+          in if Navio.navioAfundado navio
+               then (novoTabuleiro, naviosAtualizados, Afundou (tipo navio))
+               else (novoTabuleiro, naviosAtualizados, Acertou (tipo navio))
+
+        Nothing ->
+          let novoTabuleiro     = Tabuleiro.marca coordenada Atingido tabuleiro
+              naviosAtualizados = Navio.atualizaNavios coordenada listaDeNavios
+          in (novoTabuleiro, naviosAtualizados, AcertoRepetido)
 
     Just Atingido ->
       (tabuleiro, listaDeNavios, AcertoRepetido)
