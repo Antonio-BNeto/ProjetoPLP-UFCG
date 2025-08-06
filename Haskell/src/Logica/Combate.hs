@@ -5,12 +5,12 @@ import qualified Jogo.Tabuleiro as Tabuleiro
 import qualified Jogo.Navio     as Navio
 
 data ResultadoAtaque
-  = TiroFora              -- O ataque atingiu a água.
-  | AcertoRepetido        -- O ataque foi em uma posição de navio já atingida.
-  | ErroRepetido          -- O ataque foi em uma posição de água já atacada.
-  | Acertou String        -- O ataque acertou um navio, mas não o afundou.
-  | Afundou String        -- O ataque acertou e afundou o navio.
-  | CoordenadaInvalida    -- A coordenada está fora dos limites do tabuleiro.
+  = TiroFora
+  | AcertoRepetido
+  | ErroRepetido
+  | Acertou String
+  | Afundou String
+  | CoordenadaInvalida
   deriving (Eq, Show)
 
 realizarAtaque
@@ -27,14 +27,18 @@ realizarAtaque tabuleiro listaDeNavios coordenada =
 
     Just ParteNavio ->
       case Navio.encontraNavio coordenada listaDeNavios of
-        Just navio ->
+        Just _ ->
           let novoTabuleiro     = Tabuleiro.marca coordenada Atingido tabuleiro
               naviosAtualizados = Navio.atualizaNavios coordenada listaDeNavios
-          in if Navio.navioAfundado navio
-               then (novoTabuleiro, naviosAtualizados, Afundou (tipo navio))
-               else (novoTabuleiro, naviosAtualizados, Acertou (tipo navio))
-
+          in case Navio.encontraNavio coordenada naviosAtualizados of
+              Just navioAtualizado ->
+                if Navio.navioAfundado navioAtualizado
+                  then (novoTabuleiro, naviosAtualizados, Afundou (tipo navioAtualizado))
+                  else (novoTabuleiro, naviosAtualizados, Acertou (tipo navioAtualizado))
+              Nothing ->
+                (novoTabuleiro, naviosAtualizados, AcertoRepetido)
         Nothing ->
+
           let novoTabuleiro     = Tabuleiro.marca coordenada Atingido tabuleiro
               naviosAtualizados = Navio.atualizaNavios coordenada listaDeNavios
           in (novoTabuleiro, naviosAtualizados, AcertoRepetido)
