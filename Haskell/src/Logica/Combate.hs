@@ -26,22 +26,15 @@ realizarAtaque tabuleiro listaDeNavios coordenada =
       in (novoTabuleiro, listaDeNavios, TiroFora)
 
     Just ParteNavio ->
-      case Navio.encontraNavio coordenada listaDeNavios of
-        Just _ ->
-          let novoTabuleiro     = Tabuleiro.marca coordenada Atingido tabuleiro
-              naviosAtualizados = Navio.atualizaNavios coordenada listaDeNavios
-          in case Navio.encontraNavio coordenada naviosAtualizados of
-              Just navioAtualizado ->
-                if Navio.navioAfundado navioAtualizado
-                  then (novoTabuleiro, naviosAtualizados, Afundou (tipo navioAtualizado))
-                  else (novoTabuleiro, naviosAtualizados, Acertou (tipo navioAtualizado))
-              Nothing ->
-                (novoTabuleiro, naviosAtualizados, AcertoRepetido)
-        Nothing ->
-
-          let novoTabuleiro     = Tabuleiro.marca coordenada Atingido tabuleiro
-              naviosAtualizados = Navio.atualizaNavios coordenada listaDeNavios
-          in (novoTabuleiro, naviosAtualizados, AcertoRepetido)
+      let novoTabuleiro = Tabuleiro.marca coordenada Atingido tabuleiro
+          naviosAtualizados = Navio.atualizaNavios coordenada listaDeNavios
+      in case Navio.encontraNavio coordenada naviosAtualizados of
+           Just navioAtualizado ->
+             if Navio.navioAfundado navioAtualizado
+               then (novoTabuleiro, naviosAtualizados, Afundou (tipo navioAtualizado))
+               else (novoTabuleiro, naviosAtualizados, Acertou (tipo navioAtualizado))
+           Nothing ->
+             (novoTabuleiro, naviosAtualizados, Afundou "Navio Inconsistente")
 
     Just Atingido ->
       (tabuleiro, listaDeNavios, AcertoRepetido)
