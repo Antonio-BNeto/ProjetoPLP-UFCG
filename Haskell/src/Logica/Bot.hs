@@ -6,16 +6,17 @@ module Logica.Bot
 import Jogo.Arquitetura
 import Logica.Posicionamento
 import System.Random.Stateful (uniformRM, globalStdGen)
+import qualified Data.List as L
 
--- Posiciona todos os navios do bot no tabuleiro, retornando lista de navios atualizados
-escolherNaviosBot :: IO [Navio]
+-- Posiciona todos os navios do bot no tabuleiro, retornando a lista de navios e o tabuleiro
+escolherNaviosBot :: IO ([Navio], Tabuleiro)
 escolherNaviosBot = posicionarTodos naviosPadrao criacaoTabuleiro []
   where
-    posicionarTodos [] _ acc = return acc
+    posicionarTodos :: [Navio] -> Tabuleiro -> [Navio] -> IO ([Navio], Tabuleiro)
+    posicionarTodos [] tab acc = return (acc, tab)
     posicionarTodos (n:ns) tab acc = do
       (navioPosicionado, tabAtualizado) <- posicionarNavio tab n
       posicionarTodos ns tabAtualizado (acc ++ [navioPosicionado])
-
 
 -- Escolhe uma jogada para o bot considerando tiros já dados (retorna nova coordenada)
 realizarJogadaBot :: [Coordenada] -> IO Coordenada
@@ -26,4 +27,4 @@ realizarJogadaBot tirosDados = do
     then error "Sem posições restantes para jogar"
     else do
       idx <- uniformRM (0, length restantes - 1) globalStdGen
-      return (restantes !! idx)
+      return (L.head (L.drop idx restantes))

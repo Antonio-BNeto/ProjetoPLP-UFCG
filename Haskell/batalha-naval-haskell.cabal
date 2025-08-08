@@ -69,7 +69,8 @@ executable batalha-naval-haskell
     -- other-extensions:
 
     -- Other library packages from which modules are imported.
-    build-depends:    base ^>=4.18.3.0, random >=1.2
+    build-depends: base >=4.18 && <4.19, random >=1.2
+
 
     -- Directories containing source files.
     hs-source-dirs:   app, 
