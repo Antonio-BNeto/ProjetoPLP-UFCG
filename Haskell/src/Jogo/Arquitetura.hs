@@ -36,7 +36,7 @@ exibicaoCelula :: Celula -> String
 exibicaoCelula Agua = "🌊"
 exibicaoCelula ParteNavio = "🚢"
 exibicaoCelula Atingido = "✅"
-exibicaoCelula Erro = "❌"
+exibicaoCelula Erro = "🔥"
 
 -- Definindo o tamanho padrão do tabuleiro
 tamanhoTabuleiro :: Int

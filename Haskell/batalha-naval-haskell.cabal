@@ -72,13 +72,17 @@ executable batalha-naval-haskell
     build-depends:    base ^>=4.18.3.0
 
     -- Directories containing source files.
-    hs-source-dirs:   app, 
-                      src
+    hs-source-dirs:   src
+                      app
+
+    other-modules:
+        Tipos
+        Interface
+        Controlador
+        Logica
+        Bot
+        Util.IOUtils
+        Jogo.Arquitetura
 
     -- Base language which the package is written in.
     default-language: Haskell2010
-
-    other-modules: Jogo.Arquitetura,
-                   Logica.Bot,
-                   Util.IOUtils,
-                   Controlador.Controlador
