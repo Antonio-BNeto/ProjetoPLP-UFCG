@@ -73,8 +73,17 @@ executable batalha-naval-haskell
 
 
     -- Directories containing source files.
-    hs-source-dirs:   app, 
-                      src
+    hs-source-dirs:   src
+                      app
+
+    other-modules:
+        Tipos
+        Interface
+        Controlador
+        Logica
+        Bot
+        Util.IOUtils
+        Jogo.Arquitetura
 
     -- Base language which the package is written in.
     default-language: Haskell2010
