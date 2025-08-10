@@ -3,7 +3,7 @@ module Jogo.Navio (encontraNavio, atualizaNavios, navioAfundado) where
 import Jogo.Arquitetura
 
 encontraNavio :: Coordenada -> [Navio] -> Maybe Navio
-encontraNavio _    []     = Nothing
+encontraNavio _ []     = Nothing
 encontraNavio coord (n:ns)
   | coord `elem` posicoes n = Just n
   | otherwise               = encontraNavio coord ns

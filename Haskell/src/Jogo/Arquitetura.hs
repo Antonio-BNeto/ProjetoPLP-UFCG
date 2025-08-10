@@ -1,4 +1,5 @@
 {-# LANGUAGE BlockArguments #-}
+{-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 module Jogo.Arquitetura (
   Coordenada,
   Navio(..),
@@ -46,8 +47,8 @@ data Celula = Agua
 exibicaoCelula :: Celula -> String
 exibicaoCelula Agua = "🌊"
 exibicaoCelula ParteNavio = "🚢"
-exibicaoCelula Atingido = "✅"
-exibicaoCelula Erro = "🔥"
+exibicaoCelula Atingido = "💥"
+exibicaoCelula Erro = "❌"
 
 -- Definindo o tamanho padrão do tabuleiro
 tamanhoTabuleiro :: Int
