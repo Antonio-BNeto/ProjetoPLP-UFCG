@@ -73,12 +73,12 @@ Você enfrentará um bot em uma batalha para ver quem afunda a frota inimiga pri
 
 ### 👥 Integrantes
 
-[Antônio Neto](https://github.com/Antonio-BNeto)
-[Arthur Correia](https://github.com/ArthurCorreiaa)
-[Carlos Leonardo](https://github.com/Carlosalvesss)
-[Ruan Rodrigues](https://github.com/Ruanrodrigues20)
-[Matheus Miranda](https://github.com/matheusmendonca0706)
-[Yasmim Silva](https://github.com/yasmim-silva)
+- [Antônio Neto](https://github.com/Antonio-BNeto)
+- [Arthur Correia](https://github.com/ArthurCorreiaa)
+- [Carlos Leonardo](https://github.com/Carlosalvesss)
+- [Matheus Miranda](https://github.com/matheusmendonca0706)
+- [Ruan Rodrigues](https://github.com/Ruanrodrigues20)
+- [Yasmim Silva](https://github.com/yasmim-silva)
 
 ---
 📜 Licença
