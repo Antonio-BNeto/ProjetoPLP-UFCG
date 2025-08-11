@@ -1,11 +1,13 @@
 # ProjetoPLP-UFCG
 
-# Projeto – Paradigmas de Linguagem de Programação  
 **Tema:** Jogo de Batalha Naval no terminal  
 **Linguagens:** Haskell e Prolog
 
-## 📌 Descrição
-Este projeto foi desenvolvido como parte da disciplina **Paradigmas de Linguagem de Programação** e consiste em um **Jogo de Batalha Naval** jogado no terminal.
+---
+## 📖 Descrição
+### ⚓️ BATALHA NAVAL ⚓️
+Este projeto é uma implementação do clássico jogo Batalha Naval, desenvolvido em Haskell e executado no terminal. Foi criado como parte da avaliação da disciplina de Paradigmas de Linguagens de Programação.
+
 
 O projeto possui **duas versões**:
 - **Versão em Haskell** → Paradigma funcional  
@@ -26,6 +28,18 @@ Cada versão está organizada em seu respectivo diretório e contém um `README.
 ```
 
 ---
+
+### 👥 Integrantes
+
+- [Antônio Neto](https://github.com/Antonio-BNeto)
+- [Arthur Correia](https://github.com/ArthurCorreiaa)
+- [Carlos Leonardo](https://github.com/Carlosalvesss)
+- [Matheus Miranda](https://github.com/matheusmendonca0706)
+- [Ruan Rodrigues](https://github.com/Ruanrodrigues20)
+- [Yasmim Silva](https://github.com/yasmim-silva)
+
+---
+
 
 ## 📜 Licença
 Projeto desenvolvido exclusivamente para fins acadêmicos.
