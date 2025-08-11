@@ -24,7 +24,7 @@ version:            0.1.0.0
 
 -- A short (one-line) description of the package.
 synopsis:
-    Projeto utilizando paradigma funcional da cadeira ded Paradiaguem de Programação
+    Projeto utilizando paradigma funcional da cadeira de Paradigmas de Linguaguem de Programação
 
 -- A longer description of the package.
 -- description:
@@ -63,30 +63,30 @@ executable batalha-naval-haskell
     main-is:          Main.hs
 
     -- Modules included in this executable, other than Main.
-    -- other-modules:
+    other-modules:    Jogo.Arquitetura,
+                      Jogo.Navio,
+                      Jogo.Tabuleiro,
+                      Logica.Combate,
+                      Logica.Bot,
+                      Logica.Geradores,
+                      Logica.Posicionamento,
+                      Interface.Arte,
+                      Util.Lista,
+                      Controlador.Controlador
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
 
     -- Other library packages from which modules are imported.
-    build-depends:    directory ^>=1.3.8.5, filepath ^>=1.4.301.0, ansi-terminal ^>=1.1.3, base ^>=4.18.3.0, random >=1.2
+    build-depends:    base ^>=4.18.2.0, 
+                      random >=1.2,
+                      ansi-terminal,
+                      filepath,
+                      directory
 
     -- Directories containing source files.
-    hs-source-dirs:   app, 
+    hs-source-dirs:   app,
                       src
 
     -- Base language which the package is written in.
     default-language: Haskell2010
-
-    other-modules:
-        Util.Lista
-        Jogo.Arquitetura
-        Jogo.Navio
-        Jogo.Tabuleiro
-        Logica.Combate
-        Logica.Posicionamento
-        Logica.Bot
-        Logica.Geradores
-        Interface.Arte
-        Util.IOUtils
-        Controlador.Controlador

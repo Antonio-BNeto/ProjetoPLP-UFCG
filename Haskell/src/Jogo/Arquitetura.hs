@@ -1,12 +1,10 @@
-{-# LANGUAGE BlockArguments #-}
-{-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 module Jogo.Arquitetura (
   Coordenada,
   Navio(..),
   Celula(..),
   naviosPadrao,
   Orientacao(..),
-  exibicaoCelula,
+  exibicaoCelula,  -- <-- Adicionada à lista de exportações
   tamanhoTabuleiro,
   Tabuleiro,
   criacaoTabuleiro,
@@ -20,7 +18,7 @@ data Navio = Navio {
     tipo :: String,
     tamanho :: Int,
     posicoes :: [Coordenada],
-    partesAtingidas :: [Coordenada] 
+    partesAtingidas :: [Coordenada]
 } deriving (Show, Eq)
 
 -- Definindo os tipos do Navio
@@ -37,9 +35,9 @@ naviosPadrao =
 data Orientacao = H | V deriving (Show, Eq)
 
 -- Definindo os "estados" de cada célula
-data Celula = Agua 
-            | ParteNavio 
-            | Atingido 
+data Celula = Agua
+            | ParteNavio
+            | Atingido
             | Erro
             deriving (Eq, Show)
 
@@ -47,7 +45,7 @@ data Celula = Agua
 exibicaoCelula :: Celula -> String
 exibicaoCelula Agua = "🌊"
 exibicaoCelula ParteNavio = "🚢"
-exibicaoCelula Atingido = "💥"
+exibicaoCelula Atingido = "🔥"
 exibicaoCelula Erro = "❌"
 
 -- Definindo o tamanho padrão do tabuleiro
