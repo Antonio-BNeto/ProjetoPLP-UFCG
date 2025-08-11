@@ -1,4 +1,6 @@
 module Main where
+    
+import Controlador.Controlador 
 
 main :: IO ()
-main = putStrLn "Hello, Haskell!"
+main = start
