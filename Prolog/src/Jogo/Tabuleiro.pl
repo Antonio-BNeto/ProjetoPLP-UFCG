@@ -1,32 +1,56 @@
-% --- tabuleiro.pl ---
+% --- tabuleiro.pl (ATUALIZADO PARA USAR O MÓDULO 'lista') ---
 
 :- module(tabuleiro, [
     tabuleiro_obter_celula/3,
     tabuleiro_marcar_celula/4
 ]).
 
-% Dependências
-:- use_module(lista, [atualiza_indice/4]).
-:- use_module(library(lists), [nth0/3]). % Predicado nativo para acesso a listas
+:- use_module(lista). % <-- ADICIONADO: Importa o módulo centralizado
 
+% =================================================================
+% === LÓGICA PARA TABULEIRO ESPARSO (usado pelo Bot)
+% =================================================================
 
-/**
- * tabuleiro_obter_celula(+Tabuleiro, +Coordenada, -Celula)
- *
- * Obtém o estado da Celula na Coordenada (Linha, Coluna) do Tabuleiro.
- * Falha se a coordenada for inválida (fora dos limites).
- */
-tabuleiro_obter_celula(Tabuleiro, (X, Y), Celula) :-
-    nth0(X, Tabuleiro, Linha),
-    nth0(Y, Linha, Celula).
+obter_celula_esparso(Tabuleiro, Coord, Valor) :-
+    (   member((Coord, V), Tabuleiro)
+    ->  Valor = V
+    ;   Valor = agua
+    ).
 
-/**
- * tabuleiro_marcar_celula(+TabIn, +Coordenada, +NovaCelula, -TabOut)
- *
- * Cria um novo tabuleiro (TabOut) marcando a célula na
- * Coordenada (X,Y) de TabIn com o valor de NovaCelula.
- */
-tabuleiro_marcar_celula(TabIn, (X, Y), NovaCelula, TabOut) :-
-    nth0(X, TabIn, LinhaOriginal),
-    atualiza_indice(Y, NovaCelula, LinhaOriginal, NovaLinha),
-    atualiza_indice(X, NovaLinha, TabIn, TabOut).
+marcar_celula_esparso(TabIn, Coord, Valor, TabOut) :-
+    (   select((Coord, _), TabIn, Restante)
+    ->  TabOut = [(Coord, Valor)|Restante]
+    ;   TabOut = [(Coord, Valor)|TabIn]
+    ).
+
+% =================================================================
+% === LÓGICA PARA TABULEIRO DENSO (usado pelo Jogador)
+% =================================================================
+
+% --- O PREDICADO 'replace_nth/4' FOI REMOVIDO DAQUI ---
+
+obter_celula_denso(Tabuleiro, (X,Y), Valor) :-
+    nth0(Y, Tabuleiro, Linha),
+    nth0(X, Linha, Valor).
+
+marcar_celula_denso(TabIn, (X,Y), Valor, TabOut) :-
+    nth0(Y, TabIn, LinhaAntiga),
+    % --- ALTERADO: Agora chama o predicado do módulo 'lista' ---
+    atualiza_indice(X, Valor, LinhaAntiga, LinhaNova),
+    atualiza_indice(Y, LinhaNova, TabIn, TabOut).
+
+% =================================================================
+% === PREDICADOS PRINCIPAIS (com detecção de formato)
+% =================================================================
+
+tabuleiro_obter_celula(Tab, Coord, Valor) :-
+    (   Tab = [H|_], is_list(H)
+    ->  obter_celula_denso(Tab, Coord, Valor)
+    ;   obter_celula_esparso(Tab, Coord, Valor)
+    ).
+
+tabuleiro_marcar_celula(TabIn, Coord, Valor, TabOut) :-
+    (   TabIn = [H|_], is_list(H)
+    ->  marcar_celula_denso(TabIn, Coord, Valor, TabOut)
+    ;   marcar_celula_esparso(TabIn, Coord, Valor, TabOut)
+    ).

@@ -5,20 +5,18 @@
     encontra_navio/3,
     atualiza_navios/3,
     navio_get_tipo/2,
-    navio_get_tamanho/2,
-    navio_get_posicoes/2,
-    navio_get_partes_atingidas/2
+    navio_get_posicoes/2
 ]).
 
-:- use_module(library(lists)). % para member/2 e subset/2
+:- use_module(library(lists)).
 
-% Estrutura do navio: navio(Tipo, Tamanho, Posicoes, PartesAtingidas)
+% Estrutura unificada: navio(Tipo, Posicoes, PartesAtingidas)
+% Ex: navio(pequeno, [(0,0), (0,1)], [(0,0)]).
 
-% --- Getters (para acessar os dados da estrutura de forma segura) ---
-navio_get_tipo(navio(Tipo, _, _, _), Tipo).
-navio_get_tamanho(navio(_, Tamanho, _, _), Tamanho).
-navio_get_posicoes(navio(_, _, Posicoes, _), Posicoes).
-navio_get_partes_atingidas(navio(_, _, _, PartesAtingidas), PartesAtingidas).
+% --- Getters ---
+navio_get_tipo(navio(Tipo, _, _), Tipo).
+navio_get_posicoes(navio(_, Posicoes, _), Posicoes).
+navio_get_partes_atingidas(navio(_, _, PartesAtingidas), PartesAtingidas).
 
 
 % --- Lógica Principal ---
@@ -41,7 +39,7 @@ encontra_navio(Coord, [_|RestoNavios], NavioEncontrado) :-
 % atualiza_navios(+Coord, +NaviosIn, -NaviosOut)
 % Adiciona a Coordenada às partes atingidas do navio correspondente.
 atualiza_navios(_, [], []).
-atualiza_navios(Coord, [navio(T, Tam, Pos, PartesIn)|Resto], [navio(T, Tam, Pos, [Coord|PartesIn])|Resto]) :-
+atualiza_navios(Coord, [navio(Tipo, Pos, PartesIn)|Resto], [navio(Tipo, Pos, [Coord|PartesIn])|Resto]) :-
     member(Coord, Pos),
     \+ member(Coord, PartesIn), !.
 atualiza_navios(Coord, [Navio|RestoIn], [Navio|RestoOut]) :-

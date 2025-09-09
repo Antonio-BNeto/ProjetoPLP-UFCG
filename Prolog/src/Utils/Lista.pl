@@ -1,4 +1,4 @@
-% --- lista.pl ---
+% --- lista.pl (VERSÃO MELHORADA E CENTRALIZADA) ---
 
 :- module(lista, [
     atualiza_indice/4
@@ -9,16 +9,10 @@
  *
  * É verdade quando ListaOut é o resultado da substituição do elemento
  * no Indice (base 0) de ListaIn pelo NovoElemento.
+ *
+ * Esta implementação usa nth0/4, que é eficiente e falha se o
+ * Indice estiver fora dos limites da lista, tornando o código mais robusto.
  */
-
-% Caso base: O índice é 0, substituímos a cabeça da lista.
-atualiza_indice(0, Novo, [_|Cauda], [Novo|Cauda]).
-
-% Passo recursivo: O índice N é maior que 0.
-atualiza_indice(N, Novo, [Cabeca|CaudaIn], [Cabeca|CaudaOut]) :-
-    N > 0,
-    N1 is N - 1,
-    atualiza_indice(N1, Novo, CaudaIn, CaudaOut).
-
-% Caso de borda: A lista de entrada está vazia (índice fora dos limites).
-atualiza_indice(_, _, [], []).
+atualiza_indice(Indice, NovoElemento, ListaIn, ListaOut) :-
+    nth0(Indice, ListaIn, _, Restante),
+    nth0(Indice, ListaOut, NovoElemento, Restante).
