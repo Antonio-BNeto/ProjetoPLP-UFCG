@@ -1,4 +1,4 @@
-% --- posicionamento.pl ---
+% --- posicionamento.pl (VERSÃO COM POSICIONAMENTO ALEATÓRIO) ---
 
 :- module(logica_posicionamento, [
     gera_corpo_embarcacao/4,
@@ -46,20 +46,33 @@ valida_posicionamento(Posicoes, TabIn, _Acc, true) :-
            )).
 valida_posicionamento(_Posicoes, _TabIn, _Acc, false).
 
+
 % ================================================================
-% POSICIONAR UM NAVIO (procura primeira posição válida)
+% POSICIONAR UM NAVIO (de forma aleatória)
 % ================================================================
+
+% Predicado auxiliar para escolher uma orientação aleatoriamente
+gera_orientacao_aleatoria(Orient) :-
+    random_between(0, 1, I),
+    nth0(I, [horizontal, vertical], Orient).
+
 % posicionar_navio(+NavIn, +TabIn, -NavOut)
-% NavIn esperado no formato navio(Tipo, Tamanho, [], [])
+% Tenta repetidamente posicionar um navio em coordenadas e orientação aleatórias
+% até encontrar uma posição válida.
 posicionar_navio(navio(Tipo, Tamanho, [], []), TabIn, navio(Tipo, Posicoes, [])) :-
     tamanho_tabuleiro(N),
     Max is N - 1,
-    between(0, Max, X),
-    between(0, Max, Y),
-    member(Orient, [horizontal, vertical]),
-    gera_corpo_embarcacao((X,Y), Orient, Tamanho, Posicoes),
-    valida_posicionamento(Posicoes, TabIn, [], true),
-    !.
+    repeat, % Inicia um loop que tentará até ter sucesso
+        % Gera coordenadas e orientação aleatórias
+        random_between(0, Max, X),
+        random_between(0, Max, Y),
+        gera_orientacao_aleatoria(Orient),
+
+        % Gera o corpo do navio e verifica se é válido
+        gera_corpo_embarcacao((X,Y), Orient, Tamanho, Posicoes),
+        valida_posicionamento(Posicoes, TabIn, [], true),
+    !. % Se a validação for bem-sucedida, o cut (!) encerra o loop 'repeat'.
+
 
 % ================================================================
 % MARCAR NAVIOS NO TABULEIRO

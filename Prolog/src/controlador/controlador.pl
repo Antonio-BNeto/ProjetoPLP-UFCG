@@ -1,4 +1,4 @@
-% --- controlador.pl (VERSÃO COM ALINHAMENTO CORRIGIDO) ---
+% --- controlador.pl (VERSÃO COM CORREÇÃO DE TURNO DO JOGADOR) ---
 
 :- module(controlador, [start/0]).
 
@@ -12,6 +12,7 @@
 :- use_module('../bot/bot', [gera_tabuleiro_bot/2, jogar/5]).
 :- use_module('../logica/combate', [realizar_ataque/6, verifica_vitoria/1]).
 :- use_module('../logica/posicionamento', [gera_navios/4]).
+:- use_module('../jogo/tabuleiro', [tabuleiro_obter_celula/3]). % <--- ADICIONADO PARA A CORREÇÃO
 
 
 % --- Definição do predicado para limpar a tela ---
@@ -65,13 +66,26 @@ loop_jogo(TabJog, NavJog, TabBot, NavBot, Turno) :-
     ).
 
 % --- Lógica de Execução dos Turnos ---
+
+% VERSÃO CORRIGIDA: Garante que o jogador não perca o turno com jogadas repetidas.
 executar_turno(jogador, TabJog, NavJog, TabBot, NavBot, bot, TabJog, NavJog, TabBotNovo, NavBotNovo) :-
     writeln('--- Seu turno ---'),
-    obter_jogada_jogador(Coordenada),
-    realizar_ataque(TabBot, NavBot, Coordenada, TabBotNovo, NavBotNovo, Resultado),
+    repeat, % Inicia o loop para garantir uma jogada válida
+        obter_jogada_jogador(Coordenada),
+        % Verifica o estado da célula ANTES de atacar
+        tabuleiro_obter_celula(TabBot, Coordenada, Celula),
+        (   member(Celula, [atingido, erro])
+        ->  writeln('** Você já atirou aí! Tente outra coordenada. **'),
+            fail % Força o repeat a tentar de novo
+        ;   % Se a célula é válida (agua ou parte_navio), realiza o ataque
+            realizar_ataque(TabBot, NavBot, Coordenada, TabBotNovo, NavBotNovo, Resultado),
+            ! % Sucesso, corta o loop
+        )
+    , % A vírgula continua a execução após o loop ser cortado
     exibir_resultado('Você', Resultado),
     writeln('\nPressione Enter para continuar...'),
     read_line_to_string(user_input, _).
+
 
 executar_turno(bot, TabJog, NavJog, TabBot, NavBot, jogador, TabJogNovo, NavJogNovo, TabBot, NavBot) :-
     writeln('--- Turno do Bot ---'),
@@ -109,9 +123,9 @@ exibir_tabuleiros(TabJog, TabBot) :-
     tamanho_tabuleiro(T),
     T1 is T - 1,
     % Cabeçalho com números das colunas
-    write('  '), forall(between(0, T1, I), format('~w  ', [I])), % <--- CORREÇÃO AQUI (dois espaços após ~w)
+    write('  '), forall(between(0, T1, I), format('~w  ', [I])),
     write('     '),
-    write('  '), forall(between(0, T1, I), format('~w  ', [I])), % <--- CORREÇÃO AQUI (dois espaços após ~w)
+    write('  '), forall(between(0, T1, I), format('~w  ', [I])),
     nl,
     % Linhas dos tabuleiros
     forall(between(0, T1, I),
