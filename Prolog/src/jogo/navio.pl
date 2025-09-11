@@ -5,8 +5,10 @@
     encontra_navio/3,
     atualiza_navios/3,
     navio_get_tipo/2,
-    navio_get_posicoes/2
+    navio_get_posicoes/2,
+    tamanho/2
 ]).
+
 
 :- use_module(library(lists)).
 
@@ -17,6 +19,10 @@
 navio_get_tipo(navio(Tipo, _, _), Tipo).
 navio_get_posicoes(navio(_, Posicoes, _), Posicoes).
 navio_get_partes_atingidas(navio(_, _, PartesAtingidas), PartesAtingidas).
+
+
+% set_posicoes(+NavioIn, +Posicoes, -NavioOut)
+set_posicoes(navio(Tipo, _, PartesAtingidas), Posicoes, navio(Tipo, Posicoes, PartesAtingidas)).
 
 
 % --- Lógica Principal ---
@@ -44,3 +50,12 @@ atualiza_navios(Coord, [navio(Tipo, Pos, PartesIn)|Resto], [navio(Tipo, Pos, [Co
     \+ member(Coord, PartesIn), !.
 atualiza_navios(Coord, [Navio|RestoIn], [Navio|RestoOut]) :-
     atualiza_navios(Coord, RestoIn, RestoOut).
+
+
+    
+% --- Tamanho de cada tipo de navio ---
+tamanho(porta_avioes, 5).
+tamanho(encouracado, 4).
+tamanho(cruzador, 3).
+tamanho(destroyer, 3).
+tamanho(submarino, 2).

@@ -2,7 +2,8 @@
 
 :- module(tabuleiro, [
     tabuleiro_obter_celula/3,
-    tabuleiro_marcar_celula/4
+    tabuleiro_marcar_celula/4,
+    tabuleiro_vazio/2
 ]).
 
 :- use_module('../utils/lista'). % <-- ADICIONADO: Importa o módulo centralizado.
@@ -54,3 +55,11 @@ tabuleiro_marcar_celula(TabIn, Coord, Valor, TabOut) :-
     ->  marcar_celula_denso(TabIn, Coord, Valor, TabOut)
     ;   marcar_celula_esparso(TabIn, Coord, Valor, TabOut)
     ).
+
+% tabuleiro_vazio(+Tamanho, -Tabuleiro)
+% Cria um tabuleiro T x T preenchido com agua
+tabuleiro_vazio(T, Tab) :-
+    findall((X,Y,agua),
+            (between(0, T-1, X), between(0, T-1, Y)),
+            Posicoes),
+    Tab = Posicoes.
