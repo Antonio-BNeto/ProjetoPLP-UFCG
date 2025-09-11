@@ -5,7 +5,7 @@
     tabuleiro_marcar_celula/4
 ]).
 
-:- use_module(lista). % <-- ADICIONADO: Importa o módulo centralizado.
+:- use_module('../utils/lista'). % <-- ADICIONADO: Importa o módulo centralizado.
 
 % =================================================================
 % === LÓGICA PARA TABULEIRO ESPARSO (usado pelo Bot)

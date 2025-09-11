@@ -3,8 +3,8 @@
     jogar/3
 ]).
 
-:- use_module('../Logica/Posicionamento.pl').
-:- use_module('../jogo/Arquitetura.pl', [tamanho_tabuleiro/1]).
+:- use_module('../logica/posicionamento.pl').
+:- use_module('../jogo/arquitetura.pl', [tamanho_tabuleiro/1]).
 
 navios_do_bot([
     navio(pequeno,[]),

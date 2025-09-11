@@ -5,7 +5,7 @@
     posicionar_navio/3
 ]).
 
-:- use_module(tabuleiro).
+:- use_module('../jogo/tabuleiro').
 
 % ============================================
 % REGRAS PRINCIPAIS

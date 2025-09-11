@@ -5,13 +5,8 @@
     verifica_vitoria/1
 ]).
 
-:- use_module(tabuleiro, [tabuleiro_obter_celula/3, tabuleiro_marcar_celula/4]).
-:- use_module(navio, [
-    atualiza_navios/3,
-    encontra_navio/3,
-    navio_afundado/1,
-    navio_get_tipo/2
-]).
+:- use_module('../jogo/tabuleiro').
+:- use_module('../jogo/navio').
 :- use_module(library(apply), [maplist/2]).
 
 % realizar_ataque(+TabIn, +NaviosIn, +Coord, -TabOut, -NaviosOut, -Resultado)
