@@ -4,8 +4,7 @@
     atualiza_indice/4
 ]).
 
-/**
- * atualiza_indice(+Indice, +NovoElemento, +ListaIn, -ListaOut)
+/* atualiza_indice(+Indice, +NovoElemento, +ListaIn, -ListaOut)
  *
  * É verdade quando ListaOut é o resultado da substituição do elemento
  * no Indice (base 0) de ListaIn pelo NovoElemento.

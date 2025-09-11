@@ -1,5 +1,3 @@
-% --- combate.pl ---
-
 :- module(combate, [
     realizar_ataque/6,
     verifica_vitoria/1
@@ -9,42 +7,36 @@
 :- use_module('../jogo/navio').
 :- use_module(library(apply), [maplist/2]).
 
-% realizar_ataque(+TabIn, +NaviosIn, +Coord, -TabOut, -NaviosOut, -Resultado)
+% --- realizar_ataque(+TabIn, +NaviosIn, +Coord, -TabOut, -NaviosOut, -Resultado) ---
 
-% Cláusula 1: A coordenada está fora do tabuleiro.
-realizar_ataque(Tab, Navios, Coord, Tab, Navios, coordenada_invalida) :-
+% Cláusula 1: A coordenada está fora do tabuleiro (defensivo)
+realizar_ataque(Tab, Nav, Coord, Tab, Nav, coordenada_invalida) :-
     \+ tabuleiro_obter_celula(Tab, Coord, _), !.
 
-% Cláusula 2: O jogador já atirou nesta coordenada antes.
-realizar_ataque(Tab, Navios, Coord, Tab, Navios, Resultado) :-
-    tabuleiro_obter_celula(Tab, Coord, Estado),
-    member(Estado, [atingido, erro]), !,
-    ( Estado = atingido -> Resultado = acerto_repetido
-    ; Estado = erro     -> Resultado = erro_repetido
-    ).
+% Cláusula 2: Jogada repetida (em local já acertado)
+realizar_ataque(Tab, Nav, Coord, Tab, Nav, acerto_repetido) :-
+    tabuleiro_obter_celula(Tab, Coord, atingido), !.
 
-% Cláusula 3: O tiro acertou a água.
-% --- ALTERAÇÃO REALIZADA AQUI ---
-% Agora verifica se o estado da célula é '🌊' (tabuleiro do jogador)
-% OU 'agua' (padrão do tabuleiro do bot), tornando a lógica compatível com ambos.
+% Cláusula 3: Jogada repetida (em local já errado)
+realizar_ataque(Tab, Nav, Coord, Tab, Nav, erro_repetido) :-
+    tabuleiro_obter_celula(Tab, Coord, erro), !.
+
+% Cláusula 4: O tiro acertou a água.
 realizar_ataque(TabIn, Navios, Coord, TabOut, Navios, tiro_fora) :-
-    tabuleiro_obter_celula(TabIn, Coord, Estado),
-    member(Estado, ['🌊', agua]), !,
-    tabuleiro_marcar_celula(TabIn, Coord, erro, TabOut).
+    tabuleiro_obter_celula(TabIn, Coord, agua), !,
+    tabuleiro_marcar_celula(TabIn, Coord, erro, TabOut). % CORRIGIDO: marca como 'erro'
 
-% Cláusula 4: O tiro acertou parte de um navio.
+% Cláusula 5: O tiro acertou parte de um navio.
 realizar_ataque(TabIn, NaviosIn, Coord, TabOut, NaviosOut, Resultado) :-
     tabuleiro_obter_celula(TabIn, Coord, parte_navio), !,
     tabuleiro_marcar_celula(TabIn, Coord, atingido, TabOut),
-    atualiza_navios(NaviosIn, Coord, NaviosOut),
+    atualiza_navios(Coord, NaviosIn, NaviosOut),
     encontra_navio(Coord, NaviosOut, NavioAtingido),
     navio_get_tipo(NavioAtingido, Tipo),
     (   navio_afundado(NavioAtingido)
-    ->  Resultado = afundou(Tipo)
-    ;   Resultado = acertou(Tipo)
+    ->  Resultado = afundou(Tipo)     
+    ;   Resultado = acertou(Tipo)   
     ).
 
-% verifica_vitoria(+Navios)
-% Verdadeiro se todos os navios na lista estiverem afundados.
 verifica_vitoria(Navios) :-
-    maplist(navio_afundado, Navios).
+    forall(member(Navio, Navios), navio_afundado(Navio)).
