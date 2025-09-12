@@ -1,5 +1,3 @@
-% --- controlador.pl (VERSÃO COM CORREÇÃO DE TURNO DO JOGADOR) ---
-
 :- module(controlador, [start/0]).
 
 :- use_module(library(readutil)).
@@ -12,84 +10,88 @@
 :- use_module('../bot/bot', [gera_tabuleiro_bot/2, jogar/5]).
 :- use_module('../logica/combate', [realizar_ataque/6, verifica_vitoria/1]).
 :- use_module('../logica/posicionamento', [gera_navios/4]).
-:- use_module('../jogo/tabuleiro', [tabuleiro_obter_celula/3]). % <--- ADICIONADO PARA A CORREÇÃO
+:- use_module('../jogo/tabuleiro', [tabuleiro_obter_celula/3]).
 
-
-% --- Definição do predicado para limpar a tela ---
-clear_screen :-
-    (   current_prolog_flag(windows, true)
-    ->  shell('cls')
-    ;   shell('clear')
-    ).
-
+% Interface
+:- use_module('../interface/arte', [display_art/1, clear_screen/0]).
 
 % --- Ponto de Entrada Principal ---
 start :-
-    clear_screen,
-    writeln('=============================='),
-    writeln('=== BATALHA NAVAL EM PROLOG ==='),
-    writeln('=============================='),
-    sleep(1.5),
+    menu_principal.
+
+% --- Menu Principal ---
+menu_principal :-
+    arte:clear_screen,
+    arte:display_art(menu),
+    writeln('1. Iniciar jogo'),
+    writeln('2. Como Funciona'),
+    writeln('3. Sair'),
+    writeln('Escolha uma opção: '),
+    read_line_to_string(user_input, Opcao),
+    tratar_opcao(Opcao).
+
+tratar_opcao("1") :-
     iniciar_jogo.
+
+tratar_opcao("2") :-
+    arte:display_art(jogo), 
+    writeln("Pressione Enter para voltar ao menu..."),
+    read_line_to_string(user_input, _),
+    menu_principal.
+tratar_opcao("3") :-
+    arte:display_art(adeus),
+    halt.
+tratar_opcao(_) :-
+    writeln("Opção inválida!"),
+    sleep(1.5),
+    menu_principal.
 
 % --- Preparação do Jogo ---
 iniciar_jogo :-
-    clear_screen,
-    writeln('Iniciando o jogo...'),
-    writeln('Posicionando sua frota...'),
+    arte:clear_screen,
+    arte:display_art(preparacao),
     criacao_tabuleiro(TabVazio),
     navios_disponiveis(NaviosBase),
     gera_navios(NaviosBase, TabVazio, NaviosJogador, TabJogador),
-    writeln('Posicionando frota inimiga...'),
     gera_tabuleiro_bot(NaviosBotComPosicoes, TabBot),
-    % Para verifica_vitoria, precisamos da lista de navios do bot com posições
-    writeln('Tudo pronto. Que a batalha comece!'),
     sleep(1.5),
+    arte:display_art(jogo),
     loop_jogo(TabJogador, NaviosJogador, TabBot, NaviosBotComPosicoes, jogador).
 
 % --- Loop Principal do Jogo ---
 loop_jogo(TabJog, NavJog, TabBot, NavBot, Turno) :-
-    clear_screen,
+    arte:clear_screen,
+    arte:display_art(jogo),        % <<--- mostra a arte do jogo no topo
     exibir_tabuleiros(TabJog, TabBot),
 
     (   verifica_vitoria(NavBot) ->
-        writeln('***********************************'),
-        writeln('*** VITÓRIA! Você afundou todos os navios inimigos! ***'),
-        writeln('***********************************')
+        arte:display_art(vitoria)
     ;   verifica_vitoria(NavJog) ->
-        writeln('***********************************'),
-        writeln('*** DERROTA! O inimigo afundou toda a sua frota. ***'),
-        writeln('***********************************')
-    ;   % Se ninguém venceu, o jogo continua
-        executar_turno(Turno, TabJog, NavJog, TabBot, NavBot, NovoTurno, T1, N1, T2, N2),
+        arte:display_art(derrota)
+    ;   executar_turno(Turno, TabJog, NavJog, TabBot, NavBot, NovoTurno, T1, N1, T2, N2),
         loop_jogo(T1, N1, T2, N2, NovoTurno)
     ).
 
-% --- Lógica de Execução dos Turnos ---
-
-% VERSÃO CORRIGIDA: Garante que o jogador não perca o turno com jogadas repetidas.
+% --- Execução dos Turnos ---
 executar_turno(jogador, TabJog, NavJog, TabBot, NavBot, bot, TabJog, NavJog, TabBotNovo, NavBotNovo) :-
     writeln('--- Seu turno ---'),
-    repeat, % Inicia o loop para garantir uma jogada válida
+    repeat,
         obter_jogada_jogador(Coordenada),
-        % Verifica o estado da célula ANTES de atacar
         tabuleiro_obter_celula(TabBot, Coordenada, Celula),
         (   member(Celula, [atingido, erro])
         ->  writeln('** Você já atirou aí! Tente outra coordenada. **'),
-            fail % Força o repeat a tentar de novo
-        ;   % Se a célula é válida (agua ou parte_navio), realiza o ataque
-            realizar_ataque(TabBot, NavBot, Coordenada, TabBotNovo, NavBotNovo, Resultado),
-            ! % Sucesso, corta o loop
+            fail
+        ;   realizar_ataque(TabBot, NavBot, Coordenada, TabBotNovo, NavBotNovo, Resultado),
+            !
         )
-    , % A vírgula continua a execução após o loop ser cortado
+    ,
     exibir_resultado('Você', Resultado),
     writeln('\nPressione Enter para continuar...'),
     read_line_to_string(user_input, _).
 
-
 executar_turno(bot, TabJog, NavJog, TabBot, NavBot, jogador, TabJogNovo, NavJogNovo, TabBot, NavBot) :-
     writeln('--- Turno do Bot ---'),
-    sleep(1), % Pausa para dar a sensação de que o bot está "pensando"
+    sleep(1),
     jogar(TabJog, NavJog, TabJogNovo, NavJogNovo, Resultado),
     exibir_resultado('O Bot', Resultado),
     sleep(2.5).
@@ -104,7 +106,7 @@ obter_jogada_jogador(Coordenada) :-
         split_string(Linha, " ", " \t\r\n", Partes),
         (   Partes = [XS, YS], number_string(X, XS), number_string(Y, YS)
         ->  (   X >= 0, X < T, Y >= 0, Y < T
-            ->  Coordenada = (X,Y), ! % Sucesso, corta o repeat
+            ->  Coordenada = (X,Y), !
             ;   writeln('** Coordenada fora do tabuleiro. Tente novamente.'), fail
             )
         ;   writeln('** Entrada inválida. Digite dois números separados por espaço.'), fail
@@ -119,17 +121,15 @@ exibir_resultado(Jogador, erro_repetido) :- format('~w atirou em um local que j�
 exibir_resultado(_, coordenada_invalida) :- writeln('Coordenada inválida! Isso não deveria acontecer com a validação de entrada.').
 
 exibir_tabuleiros(TabJog, TabBot) :-
-    writeln('       SEU TABULEIRO                                TABULEIRO INIMIGO'),
+    writeln('          SEU TABULEIRO                      TABULEIRO INIMIGO'),
     tamanho_tabuleiro(T),
     T1 is T - 1,
-    % Cabeçalho com números das colunas
     write('  '), forall(between(0, T1, I), format('~w  ', [I])),
     write('     '),
     write('  '), forall(between(0, T1, I), format('~w  ', [I])),
     nl,
-    % Linhas dos tabuleiros
     forall(between(0, T1, I),
-           (   format('~|~` t~d~2+ ', [I]), % Número da linha
+           (   format('~|~` t~d~2+ ', [I]),
                nth0(I, TabJog, LinhaJog),
                maplist(exibicao_celula, LinhaJog, SimbolosJog),
                atomic_list_concat(SimbolosJog, ' ', LinhaJogStr),
