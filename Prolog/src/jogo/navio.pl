@@ -1,5 +1,3 @@
-% --- navio.pl ---
-
 :- module(navio, [
     navio_afundado/1,
     encontra_navio/3,
@@ -11,7 +9,6 @@
 :- use_module(library(lists)).
 
 % Estrutura unificada: navio(Tipo, Posicoes, PartesAtingidas)
-% Ex: navio(pequeno, [(0,0), (0,1)], [(0,0)]).
 
 % --- Getters ---
 navio_get_tipo(navio(Tipo, _Pos, _Partes), Tipo).
