@@ -171,18 +171,22 @@ exibir_tabuleiros(TabJog, TabBot) :-
     writeln('          SEU TABULEIRO                      TABULEIRO INIMIGO'),
     tamanho_tabuleiro(T),
     T1 is T - 1,
-    write('   '), forall(between(0, T1, I), format('~w  ', [I])),
+    % Cabeçalho eixo X
+    write('   '), forall(between(0, T1, I), format('~d  ', [I])),
     write('     '),
-    write('   '), forall(between(0, T1, I), format('~w  ', [I])),
+    write('   '), forall(between(0, T1, I), format('~d  ', [I])),
     nl,
+    % Linhas com eixo Y
     forall(between(0, T1, I),
-           (   format('~|~`0t~d~2+ ', [I]),
+           (   % coordenada Y do jogador
+               format('~|~t~d~2+ ', [I]),
                nth0(I, TabJog, LinhaJog),
                maplist(exibicao_celula, LinhaJog, SimbolosJog),
                atomic_list_concat(SimbolosJog, ' ', LinhaJogStr),
                write(LinhaJogStr),
-               write('    '),
-               format('~|~`0t~d~2+ ', [I]),
+               write('      '),
+               % coordenada Y do inimigo
+               format('~|~t~d~2+ ', [I]),
                nth0(I, TabBot, LinhaBot),
                maplist(ocultar_inimigo, LinhaBot, LinhaBotOculta),
                maplist(exibicao_celula, LinhaBotOculta, SimbolosBot),
@@ -191,6 +195,7 @@ exibir_tabuleiros(TabJog, TabBot) :-
                nl
            )),
     nl.
+
 
 % Helper para não mostrar os navios do inimigo
 ocultar_inimigo(parte_navio, agua) :- !.
